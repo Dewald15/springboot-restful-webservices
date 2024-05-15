@@ -3,6 +3,7 @@ package net.javaguides.springboot.service.impl;
 import lombok.AllArgsConstructor;
 import net.javaguides.springboot.dto.UserDto;
 import net.javaguides.springboot.entity.User;
+import net.javaguides.springboot.exception.ResourceNotFoundException;
 import net.javaguides.springboot.mapper.UserMapper;
 import net.javaguides.springboot.repository.UserRepository;
 import net.javaguides.springboot.service.UserService;
@@ -26,8 +27,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        return UserMapper.mapToUserDto(optionalUser.get());
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException("user", "id", userId)
+        );
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
